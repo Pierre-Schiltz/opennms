@@ -341,6 +341,12 @@
             <documentation>a MIB object</documentation>
           </annotation>
         </element>
+        
+        <element maxOccurs="unbounded" minOccurs="0" ref="this:kpiObj">
+          <annotation>
+            <documentation>a KPI object set</documentation>
+          </annotation>
+        </element>
 
         <element maxOccurs="unbounded" minOccurs="0" name="includeGroup"
           type="string">
@@ -537,4 +543,101 @@
     </complexType>
   </element>
 
+  <element name="kpiObj">
+    <annotation>
+      <documentation>A KPI object, holding data for KPI calculation.</documentation>
+    </annotation>
+    
+	  <complexType>
+	  	<attribute name="alias" type="string" use="required">
+			<annotation>
+	          <documentation>a human readable name for the object (such as
+	            "ifOctetsIn"). NOTE: This value is used as the RRD file name and
+	            data source name. RRD only supports data source names up to 19
+	            chars
+	            in length. If the SNMP data collector encounters an alias which
+	            exceeds 19 characters it will be truncated.
+	          </documentation>
+	        </annotation>
+	  	</attribute>
+	  	<attribute name="exp" type="string" use="required">
+			<annotation>
+	          <documentation>an expression to be evaluated.
+     			Example: "${mibObjA} / (${mibObjA} + ${mibObjB})"
+	          </documentation>
+	        </annotation>
+	  	</attribute>
+	  	<attribute name="type" use="required">
+	        <annotation>
+	          <documentation>SNMP data type SNMP supported types: counter, gauge,
+	            timeticks, integer, octetstring, string. The SNMP type is mapped
+	            to
+	            one of two RRD supported data types COUNTER or GAUGE, or the
+	            string.properties file. The mapping is as follows: SNMP counter
+	            -&gt; RRD COUNTER; SNMP gauge, timeticks, integer, octetstring
+	            -&gt;
+	            RRD GAUGE; SNMP string -&gt; String properties file</documentation>
+	        </annotation>
+	
+	        <simpleType>
+	          <restriction base="string">
+	            <pattern
+	              value="([Cc](ounter|OUNTER)(32|64)?|[Gg](auge|AUGE)(32|64)?|[Tt](ime|IME)[Tt](icks|ICKS)|[Ii](nteger|NTEGER)(32|64)?|[Oo](ctet|CTET)[Ss](tring|TRING))|[Ss](tring|TRING)" />
+	          </restriction>
+	        </simpleType>
+	  	</attribute>
+        <attribute name="instance" type="string" use="optional">
+          <annotation>
+            <documentation>optional instance identifier. Only valid instance identifier values are a
+            positive integer value or the keyword "ifIndex" which indicates that
+            the ifIndex of the interface is to be substituted for the instance
+            value for each interface the oid is retrieved for.
+            </documentation>
+          </annotation>
+        </attribute>
+	  	<attribute name="oid" type="string" use="optional">
+	        <annotation>
+	          <documentation>optional 'Fake' mib object identifier, if not set the value .1.1.1.1 is used.</documentation>
+	        </annotation>
+	  	</attribute>
+	  	<attribute name="maxval" type="string" use="optional">
+			<annotation>
+	          <documentation>optional Maximum Value. In order to correctly manage counter
+	            wraps, it is possible to add a maximum value for a collection. For
+	            example, a 32-bit counter would have a max value of
+	            4294967295.
+	          </documentation>
+	        </annotation>
+	  	</attribute>
+        <attribute name="minval" type="string" use="optional">
+          <annotation>
+            <documentation>optional Minimum Value. For completeness, adding the ability
+            to use a minimum value.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="order" type="int" use="optional">
+            <annotation>
+                <documentation>optional order calculation between KPI. Default to 0.
+                i.e. If a KPI 'k' depend on KPI 'm' result, then 'k' must have a greater order than 'm'.
+                Otherwise alphabetical order is used.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="visit" type="boolean" use="optional">
+            <annotation>
+                <documentation>optional flag to manage this KPI, if it's value is persisted (in RRD file) or not.
+                By default it's persisted.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="engine" type="string" use="optional">
+            <annotation>
+                <documentation>optional expression engine full class name implementing IKpiCalculationEngine interface.
+                If not set, a default JavaScript engine will be used to evaluate the expression.
+                </documentation>
+            </annotation>
+        </attribute>
+	  </complexType>
+  </element>
 </schema>

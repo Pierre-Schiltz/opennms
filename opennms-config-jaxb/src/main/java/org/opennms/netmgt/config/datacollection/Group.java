@@ -49,7 +49,7 @@ import org.opennms.netmgt.config.internal.collection.DatacollectionConfigVisitor
 
 @XmlRootElement(name="group", namespace="http://xmlns.opennms.org/xsd/config/datacollection")
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder={"m_name", "m_ifType", "m_mibObjects", "m_includeGroups"})
+@XmlType(propOrder={"m_name", "m_ifType", "m_mibObjects", "m_kpiObjects", "m_includeGroups"})
 @ValidateUsing("datacollection-config.xsd")
 public class Group implements Serializable {
     private static final long serialVersionUID = -4798682461748675616L;
@@ -111,6 +111,13 @@ public class Group implements Serializable {
     @XmlElement(name="mibObj")
     private List<MibObj> m_mibObjects = new ArrayList<MibObj>();
 
+    /**
+     * a KPI object set
+     * @author Capgemini - pschiltz
+     */
+    @XmlElement(name="kpiObj")
+    private List<KpiObj> m_kpiObjects = new ArrayList<>();
+    
     /**
      * sub group
      */
@@ -207,6 +214,49 @@ public class Group implements Serializable {
         return m_mibObjects.remove(mibObj);
     }
 
+    /**
+     * Get the list of Kpi Objects of this group.
+     * @return a {@link List} of {@link org.opennms.netmgt.config.datacollection.KpiObj} from this group.
+     * @author Capgemini - pschiltz
+     */
+    public List<KpiObj> getKpiObjs() {
+        if (m_kpiObjects == null) {
+            return Collections.emptyList();
+        } else {
+            return Collections.unmodifiableList(m_kpiObjects);
+        }
+    }
+    
+    /**
+     * Set the list of Kpi Objects of this group.
+     * @param kpiObjs a {@link List} of {@link org.opennms.netmgt.config.datacollection.KpiObj} to be set to this group.
+     * @author Capgemini - pschiltz
+     */
+    public void setKpiObjs(final List<KpiObj> kpiObjs) {
+    	m_kpiObjects = new ArrayList<KpiObj>(kpiObjs);
+    }
+    
+    /**
+     * Append the specified Kpi Object to the end of the Kpi Object list of this group.
+     * @param kpiObj a {@link org.opennms.netmgt.config.datacollection.KpiObj} to be added to this group.
+     * @throws IndexOutOfBoundsException
+     * @author Capgemini - pschiltz
+     */
+    public void addKpiObj(final KpiObj kpiObj) throws IndexOutOfBoundsException {
+    	m_kpiObjects.add(kpiObj);
+    }
+    
+    /**
+     * Remove the first occurrence of the specified Kpi Object from the group, if it is present.
+     * @param kpiObj a {@link org.opennms.netmgt.config.datacollection.KpiObj} to be removed from this group.
+     * @return true if this group list contained the specified Kpi Object
+     * @author Capgemini - pschiltz
+     */
+    public boolean removeKpiObj(final KpiObj kpiObj) {
+        return m_kpiObjects.remove(kpiObj);
+    }
+    
+    
     public List<String> getIncludeGroups() {
         if (m_includeGroups == null) {
             return Collections.emptyList();
@@ -283,7 +333,7 @@ public class Group implements Serializable {
 
     @Override
     public String toString() {
-        return "Group [name=" + m_name + ", ifType=" + m_ifType + ", mibObjects=" + m_mibObjects + ", includeGroups=" + m_includeGroups + "]";
+        return "Group [name=" + m_name + ", ifType=" + m_ifType + ", mibObjects=" + m_mibObjects + ", kpiObjects=" + m_kpiObjects + ", includeGroups=" + m_includeGroups + "]";
     }
 
     public void visit(final DatacollectionConfigVisitor visitor) {

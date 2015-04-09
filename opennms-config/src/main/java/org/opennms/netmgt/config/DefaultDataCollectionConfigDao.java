@@ -511,8 +511,21 @@ public class DefaultDataCollectionConfigDao extends AbstractJaxbConfigDao<Dataco
             }
         }
     }
-
-    private static Map<String,Map<String,Group>> getCollectionGroupMap(FileReloadContainer<DatacollectionConfig> container) {
+    
+    /**
+     * Build collection map which is a hash map of Collection
+     * objects indexed by collection name...also build
+     * collection group map which is a hash map indexed
+     * by collection name with a hash map as the value
+     * containing a map of the collections's group names
+     * to the Group object containing all the information
+     * for that group.
+     * 
+     * @param container
+     * @return 
+     * @author Modified by Capgemini - pschiltz set method to public
+     */
+    public static Map<String,Map<String,Group>> getCollectionGroupMap(FileReloadContainer<DatacollectionConfig> container) {
         // Build collection map which is a hash map of Collection
         // objects indexed by collection name...also build
         // collection group map which is a hash map indexed

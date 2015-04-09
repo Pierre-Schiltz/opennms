@@ -30,6 +30,7 @@
 package org.opennms.netmgt.collectd;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,7 +44,10 @@ import org.opennms.netmgt.collection.api.CollectionResource;
 import org.opennms.netmgt.collection.api.ServiceParameters;
 import org.opennms.netmgt.config.DataCollectionConfigDao;
 import org.opennms.netmgt.config.DataCollectionConfigFactory;
+import org.opennms.netmgt.config.DefaultDataCollectionConfigDao;
 import org.opennms.netmgt.config.MibObject;
+import org.opennms.netmgt.config.datacollection.Group;
+import org.opennms.netmgt.config.datacollection.KpiObj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +74,13 @@ public class OnmsSnmpCollection {
     private List<SnmpAttributeType> m_nodeAttributeTypes;
     private List<SnmpAttributeType> m_indexedAttributeTypes;
     private List<SnmpAttributeType> m_aliasAttributeTypes;
-
+    /**
+     * List of all KPI by collection and by group.
+     * @author Capgemini - pschiltz
+     */
+    private Map<String,Map<String, List<SnmpKpi>>> m_kpisByCollectionByGroup;
+    
+    
     /**
      * <p>Constructor for OnmsSnmpCollection.</p>
      *
@@ -388,7 +398,74 @@ public class OnmsSnmpCollection {
         }
         return groupType;
     }
-
+    
+    /**
+     * Method to retrieve the configured list of KPIs for a given group.
+     * 
+     * @param collectionName the collection name used to find it's matching KPIs.
+     * @param groupName the group name used to find it's matching KPIs.
+     * @return the list of matching KPI for the given group from the configuration.
+     * @author Capgemini - pschiltz
+     */
+    public List<SnmpKpi> loadKpiGroup(String collectionName, String groupName) {
+        LOG.debug("load KPIs for group={} from collection={}", groupName, collectionName);
+        // Create the list
+        List<SnmpKpi> kpis = new LinkedList<>();
+        
+        // Retrieve the KPI for this group
+        kpis.addAll(this.getKpisByCollectionByGroup().get(collectionName).get(groupName));
+        
+        // Return the matching KPIs
+        return kpis;
+    }
+    
+    /**
+     * Initialization of the KPIs (for all collections and groups).
+     * (The retrieve is done once and stored for next calls.)
+     * 
+     * @return List of KPI by collection and by group.
+     * @author Capgemini - pschiltz
+     */
+    private Map<String, Map<String, List<SnmpKpi>>> getKpisByCollectionByGroup() {
+        if (this.m_kpisByCollectionByGroup == null) {
+            this.m_kpisByCollectionByGroup = new HashMap<>();
+            
+            // Retrieve KPI objects of all groups of all collections
+            Map<String,Map<String,Group>> collectionGroups = DefaultDataCollectionConfigDao.getCollectionGroupMap(((DefaultDataCollectionConfigDao) getDataCollectionConfigDao()).getContainer());
+            
+            // Loop on collections
+            for (Map.Entry<String,Map<String,Group>> collection : collectionGroups.entrySet()) {
+                
+                LOG.debug("configure KPIs lists: for collection={}", collection.getKey());
+                
+                Map<String,List<SnmpKpi>> groups = new HashMap<>();
+                
+                // Loop on groups of the current collection
+                for (Map.Entry<String,Group> group : collection.getValue().entrySet()) {
+                    
+                    LOG.debug("configure KPIs lists: for collection={}: for group={} {}", collection.getKey(), group.getKey(), group.getValue());
+                    
+                    // Retrieve KPI list for one group
+                    List<KpiObj> kpiObjs = group.getValue().getKpiObjs();
+                    List<SnmpKpi> snmpKpis = new ArrayList<>();
+                    
+                    // Convert KpiObj to SnmpKpi
+                    for (KpiObj kpi : kpiObjs) {
+                        LOG.debug("configure KPIs lists: for collection={}: for group={}: for KPI={}", collection.getKey(), group.getKey(), kpi);
+                        snmpKpis.add(new SnmpKpi(kpi));
+                    }
+                    
+                    // Save the KPIs
+                    groups.put(group.getValue().getName(), snmpKpis);
+                }
+                
+                this.m_kpisByCollectionByGroup.put(collection.getKey(), groups);
+            }
+        }
+        return this.m_kpisByCollectionByGroup;
+    }
+    
+    
     /**
      * <p>getResourceType</p>
      *
