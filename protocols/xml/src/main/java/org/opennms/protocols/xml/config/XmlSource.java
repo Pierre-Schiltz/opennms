@@ -69,7 +69,50 @@ public class XmlSource extends XmlGroups implements Serializable, Comparable<Xml
     /** The source URL. */
     @XmlAttribute(name="url", required=true)
     private String m_url;
-
+    
+    /**
+     * Specific separator to use when collecting data from CSV file.
+     * @author Capgemini - pschiltz
+     */
+    @XmlAttribute(name="csv-separator", required=false)
+    private Character m_csvSeparator;
+    
+    /**
+     * Encoding for CSV file.
+     * @author Capgemini - pschiltz
+     */
+    @XmlAttribute(name="csv-encoding", required=false)
+    private String m_csvEncoding;
+    
+    /**
+     * Specific quote character to use when collecting data from CSV file.
+     * @author Capgemini - pschiltz
+     */
+    @XmlAttribute(name="csv-quote-char", required=false)
+    private Character m_csvQuoteChar;
+    
+    /**
+     * If caracaters ouside quotes are ignored when collecting data from CSV file.
+     * @author Capgemini - pschiltz
+     */
+    @XmlAttribute(name="csv-strict-quote", required=false)
+    private Boolean m_csvStrictQuote;
+    
+    /**
+     * Specific escaping character (to esacape separator and quote characters) to use when collecting data from CSV file.
+     * @author Capgemini - pschiltz
+     */
+    @XmlAttribute(name="csv-escape-char", required=false)
+    private Character m_csvEscapeChar;
+    
+    /**
+     * If leading white space caracaters before quotes are ignored when collecting data from CSV file.
+     * @author Capgemini - pschiltz
+     */
+    @XmlAttribute(name="csv-trim-white-space", required=false)
+    private Boolean m_csvTrimWhiteSpace;
+    
+    
     /**
      * Instantiates a new XML source.
      */
@@ -129,7 +172,86 @@ public class XmlSource extends XmlGroups implements Serializable, Comparable<Xml
     public void setImportGroupsList(List<String> importGroupsList) {
         this.m_importGroupsList = importGroupsList;
     }
-
+    
+    /**
+     * Specific separator to use when collecting data from CSV file.
+     * @return this group current CSV separator.
+     * @author Capgemini - pschiltz
+     */
+    public Character getCsvSeparator() { return this.m_csvSeparator; }
+    /**
+     * Specific separator to use when collecting data from CSV file.
+     * @param separator, the new CSV separator.
+     * @author Capgemini - pschiltz
+     */
+    public void setCsvSeparator(Character separator) { this.m_csvSeparator = separator; }
+    
+    /**
+     * Encoding for CSV file.
+     * @return this group current CSV file encoding.
+     * @author Capgemini - pschiltz
+     */
+    public String getCsvEncoding() { return this.m_csvEncoding; }
+    /**
+     * Encoding for CSV file.
+     * @param encoding, the new CSV file encoding.
+     * @author Capgemini - pschiltz
+     */
+    public void setCsvEncoding(String encoding) { this.m_csvEncoding = encoding; }
+    
+    /**
+     * Specific quote character to use when collecting data from CSV file.
+     * @return the quote character used.
+     * @author Capgemini - pschiltz
+     */
+    public Character getCsvQuoteChar() { return this.m_csvQuoteChar; }
+    /**
+     * Specific quote character to use when collecting data from CSV file.
+     * @param quote, the new quote character.
+     * @author Capgemini - pschiltz
+     */
+    public void setCsvQuoteChar(Character quote) { this.m_csvQuoteChar = quote; }
+    
+    /**
+     * If caracaters ouside quotes are ignored when collecting data from CSV file.
+     * @return if caracaters ouside quotes are ignored.
+     * @author Capgemini - pschiltz
+     */
+    public Boolean getCsvStrictQuote() { return this.m_csvStrictQuote; }
+    /**
+     * If caracaters ouside quotes are ignored when collecting data from CSV file.
+     * @param strictQuote, new activation value for strict quote rule.
+     * @author Capgemini - pschiltz
+     */
+    public void setCsvStrictQuote(Boolean strictQuote) { this.m_csvStrictQuote = strictQuote; }
+    
+    /**
+     * Specific escaping character (to esacape separator and quote characters) to use when collecting data from CSV file.
+     * @return the escape character used.
+     * @author Capgemini - pschiltz
+     */
+    public Character getCsvEscapeChar() { return this.m_csvEscapeChar; }
+    /**
+     * Specific escaping character (to esacape separator and quote characters) to use when collecting data from CSV file.
+     * @param escape, the new escape character.
+     * @author Capgemini - pschiltz
+     */
+    public void setCsvEscapeChar(Character escape) { this.m_csvEscapeChar = escape; }
+    
+    /**
+     * If leading white space caracaters before quotes are ignored when collecting data from CSV file.
+     * @return 
+     * @author Capgemini - pschiltz
+     */
+    public Boolean getCsvTrimWhiteSpace() { return this.m_csvTrimWhiteSpace; }
+    /**
+     * If leading white space caracaters before quotes are ignored when collecting data from CSV file.
+     * @param trimWhiteSpace, new activation value for trim of leading space rule.
+     * @author Capgemini - pschiltz
+     */
+    public void setCsvTrimWhiteSpace(Boolean trimWhiteSpace) { this.m_csvTrimWhiteSpace = trimWhiteSpace; }
+    
+    
     /**
      * Checks for import groups.
      *

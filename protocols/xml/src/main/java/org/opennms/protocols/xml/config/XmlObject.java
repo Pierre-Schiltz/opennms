@@ -29,10 +29,13 @@
 package org.opennms.protocols.xml.config;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
@@ -63,10 +66,33 @@ public class XmlObject implements Serializable, Comparable<XmlObject> {
     private String m_xpath;
 
     /**
+     * The CSV file column index where to extract data.
+     * @author Capgemini - pschiltz
+     */
+    @XmlAttribute(name="csv-index", required=false)
+    private Integer m_csvIndex;
+    
+    /**
+     * The calculation expression to retrieve this object value from CSV file.
+     * @author Capgemini - pschiltz
+     */
+    @XmlAttribute(name="csv-expression", required=false)
+    private String m_csvExpression;
+    
+    /**
+     * Order between calculated objects from CSV from collect.
+     * @author Capgemini - pschiltz
+     */
+    @XmlAttribute(name="csv-order", required=false)
+    private int m_csvOrder;
+    
+    
+    /**
      * Instantiates a new XML object.
      */
     public XmlObject() {
         super();
+        this.m_csvOrder = 0;
     }
 
     /**
@@ -135,7 +161,56 @@ public class XmlObject implements Serializable, Comparable<XmlObject> {
     public void setXpath(String xpath) {
         m_xpath = xpath;
     }
-
+    
+    /**
+     * The CSV file column index where to extract data.
+     * @return the column index to collect.
+     * @author Capgemini - pschiltz
+     */
+    public Integer getCsvIndex() { return this.m_csvIndex; }
+    /**
+     * The CSV file column index where to extract data.
+     * @param index, the new column index.
+     * @author Capgemini - pschiltz
+     */
+    public void setCsvIndex(Integer index) { this.m_csvIndex = index; }
+    
+    /**
+     * The calculation expression to retrieve this object value from CSV file.
+     * @return the expression calulcating this object value.
+     * @author Capgemini - pschiltz
+     */
+    public String getCsvExpression() { return this.m_csvExpression; }
+    /**
+     * The calculation expression to retrieve this object value from CSV file.
+     * @param expression, the new expression.
+     * @author Capgemini - pschiltz
+     */
+    public void setCsvExpression(String expression) { this.m_csvExpression = expression; }
+    
+    /**
+     * Order between calculated objects from CSV from collect.
+     * @return order of this object in calculation process.
+     * @author Capgemini - pschiltz
+     */
+    public int getCsvOrder() { return this.m_csvOrder; }
+    /**
+     * Order between calculated objects from CSV from collect.
+     * @param order, the new order of this object.
+     * @author Capgemini - pschiltz
+     */
+    public void setCsvOrder(int order) { this.m_csvOrder = order; }
+    
+    
+    /**
+     * @return if this CSV object will be calculated using it's expression.
+     * @author Capgemini - pschiltz
+     */
+    public boolean isCsvExpression() {
+        return this.m_csvExpression != null && !this.m_csvExpression.isEmpty();
+    }
+    
+    
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */

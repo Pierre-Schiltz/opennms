@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xs:schema elementFormDefault="qualified" version="1.0" targetNamespace="http://xmlns.opennms.org/xsd/config/xml-datacollection" xmlns:tns="http://xmlns.opennms.org/xsd/config/xml-datacollection" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+  <xs:element name="Character" type="tns:Character"/>
+
+  <xs:element name="CollectRuleType" type="tns:CollectRuleType"/>
+
   <xs:element name="content" type="tns:content"/>
 
   <xs:element name="header" type="tns:header"/>
@@ -24,6 +28,22 @@
   <xs:element name="xml-object" type="tns:xmlObject"/>
 
   <xs:element name="xml-source" type="tns:xmlSource"/>
+
+  <xs:element name="rule" type="tns:rule"/>
+
+  <xs:simpleType name="Character">
+    <xs:restriction base="xs:string">
+      <xs:length fixed="true" value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CollectRuleType">
+     <xs:restriction base="xs:string">
+         <xs:enumeration value="START"/>
+         <xs:enumeration value="VALID"/>
+         <xs:enumeration value="STOP"/>
+     </xs:restriction>
+  </xs:simpleType>
 
   <xs:complexType name="content">
     <xs:simpleContent>
@@ -77,6 +97,12 @@
           <xs:element ref="tns:request" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="url" type="xs:string" use="required"/>
+        <xs:attribute name="csv-separator" type="tns:Character"/>
+        <xs:attribute name="csv-encoding" type="xs:string"/>
+        <xs:attribute name="csv-quote-char" type="tns:Character"/>
+        <xs:attribute name="csv-trim-quote" type="xs:boolean"/>
+        <xs:attribute name="csv-escape-char" type="tns:Character"/>
+        <xs:attribute name="csv-trim-white-space" type="xs:boolean"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -91,6 +117,7 @@
     <xs:sequence>
       <xs:element ref="tns:xml-object" maxOccurs="unbounded"/>
       <xs:element ref="tns:resource-key" minOccurs="0"/>
+      <xs:element ref="tns:rule" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="resource-type" type="xs:string" use="required"/>
@@ -98,6 +125,19 @@
     <xs:attribute name="key-xpath" type="xs:string"/>
     <xs:attribute name="timestamp-xpath" type="xs:string"/>
     <xs:attribute name="timestamp-format" type="xs:string"/>
+    <xs:attribute name="csv-resource-name" type="xs:string"/>
+    <xs:attribute name="csv-resource-index" type="xs:integer"/>
+    <xs:attribute name="csv-resource-expression" type="xs:string"/>
+    <xs:attribute name="csv-timestamp-now" type="xs:boolean"/>
+    <xs:attribute name="csv-timestamp-row-index" type="xs:integer"/>
+    <xs:attribute name="csv-timestamp-column-index" type="xs:integer"/>
+    <xs:attribute name="csv-timestamp-expression" type="xs:string"/>
+    <xs:attribute name="csv-trim-start" type="xs:integer"/>
+    <xs:attribute name="csv-trim-end" type="xs:integer"/>
+    <xs:attribute name="csv-columns-count" type="xs:integer"/>
+    <xs:attribute name="csv-start-when" type="xs:string"/>
+    <xs:attribute name="csv-stop-when" type="xs:string"/>
+    <xs:attribute name="csv-expression-engine" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="xmlObject">
@@ -105,6 +145,16 @@
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="type" type="xs:string" use="required"/>
     <xs:attribute name="xpath" type="xs:string" use="required"/>
+    <xs:attribute name="csv-index" type="xs:integer"/>
+    <xs:attribute name="csv-expression" type="xs:string"/>
+    <xs:attribute name="csv-order" type="xs:integer"/>
+  </xs:complexType>
+
+  <xs:complexType name="rule">
+    <xs:sequence/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="type" type="tns:CollectRuleType" use="required"/>
+    <xs:attribute name="expression" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="xmlResourceKey">
